@@ -1,0 +1,77 @@
+ private Rigidbody2D rb;
+    [SerializeField] private float moveSpeed = 1f;
+    [SerializeField] private float sprintSpeed = 1f;
+    private bool facingRight = true;
+    Vector2 movement;
+    [SerializeField] private Transform weaponHolder;
+    private GameObject childHand;
+    [SerializeField] private Transform childHand_not_equiped;
+    private bool flipped = true;
+
+    public bool isDead = false;
+
+
+    private void Start()
+    {
+        rb = GetComponent<Rigidbody2D>();
+        
+    }
+
+    private void Update()
+    {
+
+    }
+
+
+    void FixedUpdate()
+    {
+        if (isDead) return;
+
+        movement.x = Input.GetAxisRaw("Horizontal");
+        //rb.MovePosition(rb.position + movement * moveSpeed/2 * Time.deltaTime);
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            rb.MovePosition(rb.position + movement * sprintSpeed/1 * Time.fixedDeltaTime);
+        }
+        else
+        {
+            rb.MovePosition(rb.position + movement * moveSpeed/2 * Time.fixedDeltaTime);
+        }
+
+
+        if (facingRight == false && movement.x > 0)
+        {
+            Flip();
+        }
+        else if (facingRight == true && movement.x < 0)
+        {
+            Flip();
+        }
+
+
+
+    }
+
+
+
+    void Flip()
+    {
+        facingRight = !facingRight;
+        GetComponent<SpriteRenderer>().flipX = !facingRight;
+        //childHand = GameObject.Find("Hand/Graphic_hand_equiped");
+        //childHand.GetComponent<SpriteRenderer>().flipY = !facingRight;
+
+
+        if (flipped)
+        {
+           childHand_not_equiped.localScale = new Vector3(transform.localScale.x, transform.localScale.y * -1, transform.localScale.z);
+           weaponHolder.localScale = new Vector3(transform.localScale.x, transform.localScale.y * -1, transform.localScale.z);
+           flipped = false;
+        }
+        else
+        {
+            childHand_not_equiped.localScale = new Vector3(transform.localScale.x, transform.localScale.y * 1, transform.localScale.z);
+            weaponHolder.localScale = new Vector3(transform.localScale.x, transform.localScale.y * 1, transform.localScale.z);
+            flipped = true;
+        }
+    }
