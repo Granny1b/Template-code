@@ -1,0 +1,57 @@
+    [SerializeField] private float bulletSpeed;
+    [SerializeField] private GameObject bullet;
+    [SerializeField] private Transform shootOutWep;
+
+    [SerializeField] public int maxAmmo = 30;
+    [SerializeField] private int currentAmmo;
+    [SerializeField] private float reloadTime = 2f;
+    public float damageAmmount = 45f;
+    public bool isReloading = false;
+
+    [SerializeField] private float fireRate = 0.5f;
+    private float nextFire = 0.2f;
+
+
+
+    void Start()
+    {
+        currentAmmo = maxAmmo;
+        audioSource = GetComponent<AudioSource>();
+    }
+
+
+    void Update()
+    {
+        if (isReloading)
+            return;
+
+        if (currentAmmo == 0 && !isReloading || Input.GetKeyDown(KeyCode.R) && !isReloading)
+        {
+            StartCoroutine(Reload());
+        }
+
+        if (currentAmmo > 0 && Input.GetKeyDown(KeyCode.Mouse0) && Time.time > nextFire)
+        {
+            nextFire = Time.time + fireRate;
+            Shoot();
+        }
+
+        currentAmmoHUD.text = currentAmmo.ToString();
+        maxAmmoHUD.text = maxAmmo.ToString();
+    }
+
+    private void Shoot()
+    {
+        GameObject bulletInstantiate =  Instantiate(bullet, shootOutWep.position, shootOutWep.rotation);
+        bulletInstantiate.GetComponent<Rigidbody2D>().AddForce(bulletInstantiate.transform.right * bulletSpeed * Time.fixedDeltaTime);
+        currentAmmo--;
+    }
+
+
+    IEnumerator Reload()
+    {
+        isReloading = true;
+        yield return new WaitForSeconds(reloadTime);
+        currentAmmo = maxAmmo;
+        isReloading = false;
+    }
