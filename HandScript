@@ -1,0 +1,33 @@
+    [SerializeField] private float speed = 2f;
+    [SerializeField] private GameObject radiusCenter;
+    [SerializeField] private float radius = 0.5f;
+
+
+    void Start()
+    {
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+    }
+
+
+    
+    void Update()
+    {
+
+        Vector3 playerPos = radiusCenter.transform.position;
+        Vector3 playerToHand = this.transform.position - playerPos;
+
+
+        var moveDirection = new Vector3(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"), 0);
+
+
+        if (Vector3.Distance(playerPos, transform.position) > radius)
+            transform.localPosition = transform.localPosition.normalized * radius;
+
+        transform.position += moveDirection * speed * Time.deltaTime;
+
+
+        float angle = Mathf.Atan2(playerToHand.y, playerToHand.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+
+    }
